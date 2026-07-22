@@ -5,7 +5,11 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import { fetchProduct, type Product } from "@/lib/fakestore";
+import {
+  buildFichaDownloadUrl,
+  fetchProduct,
+  type Product,
+} from "@/lib/fakestore";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -121,7 +125,7 @@ export default function ProductDetailPage() {
             </button>
             <a
               id="download-ficha-btn"
-              href={`/api/products/${product.id}/ficha`}
+              href={buildFichaDownloadUrl(product)}
               className="rounded border border-slate-300 px-4 py-2 text-slate-800 hover:bg-slate-50"
             >
               Descargar ficha PDF

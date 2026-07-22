@@ -20,7 +20,7 @@ test.describe("Download", () => {
       });
     });
 
-    await page.route("**/api/products/1/ficha", async (route) => {
+    await page.route("**/api/products/1/ficha**", async (route) => {
       await route.fulfill({
         status: 200,
         headers: {

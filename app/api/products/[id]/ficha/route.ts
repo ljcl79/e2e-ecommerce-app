@@ -25,22 +25,62 @@ function buildPdfBuffer(product: Product): Promise<Buffer> {
   });
 }
 
+function productFromSearchParams(
+  id: string,
+  searchParams: URLSearchParams,
+): Product | null {
+  const title = searchParams.get("title");
+  const priceRaw = searchParams.get("price");
+  const description = searchParams.get("description");
+  const category = searchParams.get("category");
+
+  if (!title || !priceRaw || !description || !category) {
+    return null;
+  }
+
+  const price = Number(priceRaw);
+  if (Number.isNaN(price)) {
+    return null;
+  }
+
+  return {
+    id: Number(id) || 0,
+    title,
+    price,
+    description,
+    category,
+    image: searchParams.get("image") ?? "",
+  };
+}
+
+async function fetchProductFromApi(id: string): Promise<Product | null> {
+  const response = await fetch(`${FAKESTORE_BASE_URL}/products/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return (await response.json()) as Product;
+}
+
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
   const { id } = await context.params;
 
   try {
-    const response = await fetch(`${FAKESTORE_BASE_URL}/products/${id}`, {
-      cache: "no-store",
-    });
+    const { searchParams } = new URL(request.url);
+    const product =
+      productFromSearchParams(id, searchParams) ??
+      (await fetchProductFromApi(id));
 
-    if (!response.ok) {
+    if (!product) {
       return new Response("Producto no encontrado", { status: 404 });
     }
 
-    const product = (await response.json()) as Product;
     const pdfBuffer = await buildPdfBuffer(product);
 
     return new Response(new Uint8Array(pdfBuffer), {

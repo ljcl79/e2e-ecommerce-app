@@ -28,3 +28,14 @@ export async function fetchProduct(id: string | number): Promise<Product> {
   }
   return response.json();
 }
+
+/** URL de descarga PDF con datos del producto (evita fetch server→Fake Store en Vercel). */
+export function buildFichaDownloadUrl(product: Product): string {
+  const params = new URLSearchParams({
+    title: product.title,
+    price: String(product.price),
+    description: product.description,
+    category: product.category,
+  });
+  return `/api/products/${product.id}/ficha?${params.toString()}`;
+}
