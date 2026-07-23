@@ -55,7 +55,13 @@ export default function HomePage() {
         </p>
       ) : null}
 
-      {!loading && !error ? (
+      {!loading && !error && products.length === 0 ? (
+        <p id="products-empty" className="text-slate-600">
+          No hay productos disponibles
+        </p>
+      ) : null}
+
+      {!loading && !error && products.length > 0 ? (
         <ul
           id="products-list"
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"

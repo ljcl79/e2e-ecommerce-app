@@ -13,10 +13,20 @@ export type Product = {
   };
 };
 
+function productsListErrorMessage(status: number): string {
+  if (status === 403) {
+    return "Se intentó acceso no autorizado";
+  }
+  if (status === 500) {
+    return "Error general de la aplicación";
+  }
+  return "No se pudieron cargar los productos";
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   const response = await fetch(`${FAKESTORE_BASE_URL}/products`);
   if (!response.ok) {
-    throw new Error("No se pudieron cargar los productos");
+    throw new Error(productsListErrorMessage(response.status));
   }
   return response.json();
 }
