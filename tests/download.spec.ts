@@ -41,5 +41,6 @@ test.describe("Download", () => {
     const download = await downloadPromise;
 
     expect(download.suggestedFilename()).toBe("fichaProducto.pdf");
+    expect(await download.failure()).toBeNull();
   });
 });
