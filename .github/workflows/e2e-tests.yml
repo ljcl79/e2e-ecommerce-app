@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20 # evita que el job se cuelgue si apt/mirrors fallan
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-noble # trae browsers preinstalados, evita apt install lento/inestable en el runner
     steps:
       - uses: actions/checkout@v4
 
@@ -19,9 +22,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium # solo instala chromium, ya que es el unico project configurado
 
       - name: Run E2E tests
         run: npm run test:e2e
